@@ -6,7 +6,10 @@ import {
 import type { HydraDatabase } from '@use-hydra-ai/db';
 import { operations } from '@use-hydra-ai/db';
 import type { DBSuggestion } from '@use-hydra-ai/db/src/schema';
+import { b } from '../baml_client';
+import type { ThreadSuggestion } from '../baml_client/types';
 import { CorrelationLoggerService } from '../common/services/logger.service';
+import { AvailableComponent } from '../components/dto/generate-component.dto';
 import {
   AudioFormat,
   ChatCompletionContentPart,
@@ -222,16 +225,59 @@ export class ThreadsService {
     const count = generateSuggestionsDto.maxSuggestions ?? 3;
 
     try {
-      // Generate mock suggestions
-      const mockSuggestions = Array.from({ length: count }, (_, index) => ({
+      // Get thread and components
+      const thread = await operations.getThreadForProjectId(
+        this.db,
+        message.threadId,
+        message.thread.projectId,
+      );
+      if (!thread) {
+        throw new NotFoundException('Thread not found');
+      }
+
+      // Get available components from the message's componentDecision
+      const availableComponents = message.componentDecision?.componentName
+        ? ([
+            { name: message.componentDecision.componentName },
+          ] as AvailableComponent[])
+        : [];
+      const componentNames = availableComponents
+        .map((comp) => comp.name + '(' + comp.description + ')')
+        .join(', ');
+
+      // Convert message content and component decisions to string for BAML
+      const messageContent = Array.isArray(message)
+        ? message
+        : typeof message.content === 'string'
+          ? message.content
+          : message.content
+              .map((part) => (part.type === 'text' ? part.text : ''))
+              .join(' ');
+
+      const componentDecisionStr = message.componentDecision
+        ? `\nComponent Decision: ${message.componentDecision.componentName}`
+        : '';
+
+      const contentWithDecisions = messageContent + componentDecisionStr;
+
+      // Generate suggestions using BAML
+      const suggestions: ThreadSuggestion[] = await b.GenerateThreadSuggestions(
+        contentWithDecisions,
+        componentNames,
+        count,
+      );
+
+      // Map BAML suggestions to our DTO format
+      const mappedSuggestions = suggestions.map((suggestion) => ({
         messageId,
-        title: `Suggestion ${index + 1}`,
-        detailedSuggestion: `This is detailed suggestion number ${index + 1}`,
+        title: suggestion.title,
+        detailedSuggestion: suggestion.detailedSuggestion,
       }));
 
+      // Save suggestions to database
       const savedSuggestions = await operations.createSuggestions(
         this.db,
-        mockSuggestions,
+        mappedSuggestions,
       );
 
       this.logger.log(

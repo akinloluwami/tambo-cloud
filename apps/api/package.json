@@ -6,10 +6,10 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
-    "build": "NODE_OPTIONS=--experimental-require-module nest build",
-    "start": "NODE_OPTIONS=--experimental-require-module nest start",
-    "dev": "NODE_OPTIONS=--experimental-require-module nest start --watch",
-    "start:dev": "NODE_OPTIONS=--experimental-require-module nest start --watch",
+    "build": "npm run baml-build && NODE_OPTIONS=--experimental-require-module nest build",
+    "start": "npm run baml-build && NODE_OPTIONS=--experimental-require-module nest start",
+    "dev": "npm run baml-build && NODE_OPTIONS=--experimental-require-module nest start --watch",
+    "start:dev": "npm run baml-build && NODE_OPTIONS=--experimental-require-module nest start --watch",
     "start:debug": "NODE_OPTIONS=--experimental-require-module nest start --debug --watch ",
     "start:prod": "NODE_OPTIONS=--experimental-require-module node dist/apps/api/src/main",
     "test": "jest",
@@ -19,9 +19,12 @@
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "clean": "rm -rf dist",
     "check-types": "tsc --noEmit",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "baml-generate": "baml-cli generate",
+    "baml-build": "baml-cli generate && tsc --build"
   },
   "dependencies": {
+    "@boundaryml/baml": "^0.76.2",
     "@google-cloud/firestore": "^7.10.0",
     "@nestjs/common": "^11.0.9",
     "@nestjs/config": "^4.0.0",

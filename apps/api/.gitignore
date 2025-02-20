@@ -58,3 +58,6 @@ pids
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 
 *.code-workspace
+
+# baml
+baml_client
