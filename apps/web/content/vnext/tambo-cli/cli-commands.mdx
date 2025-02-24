@@ -1,0 +1,171 @@
+---
+title: CLI Installation
+description: Install Tambo components using the CLI.
+---
+
+## Getting Started
+
+### 1. Sign Up
+
+First, create a Tambo account:
+
+```bash
+npx tambo signup
+```
+
+### 2. Login
+
+If you already have an account, log in:
+
+```bash
+npx tambo login
+```
+
+## Adding Components
+
+Once authenticated, you can add components using:
+
+```bash
+npx tambo add <component-name>
+```
+
+When you run the command, you'll see the installation progress:
+
+```bash
+✔ Checking registry...
+✔ Installing dependencies...
+✔ Adding component files...
+✔ Created 1 file:
+  - src\components\ui\<component-name>.tsx
+✔ Installing Tailwind dependencies...
+```
+
+The CLI will automatically:
+- Check the component registry
+- Install required dependencies
+- Create component files
+- Configure Tailwind CSS
+- Update your project's styling
+
+### Example: Adding a Message Component
+
+```bash
+npx tambo add message
+```
+
+Output:
+```bash
+✔ Checking registry...
+✔ Installing dependencies...
+✔ Adding component files...
+✔ Created 1 file:
+  - src\components\ui\message.tsx
+✔ Updated tailwind.config.ts colors
+✔ Updated globals.css with new variables
+✔ Installing Tailwind dependencies...
+```
+
+### Available Components
+
+You can add any of these components:
+
+- `chat-input` - Interactive chat input component
+- `chat-thread` - Thread component for conversations
+- `message` - Message component for chat interfaces
+- `thread-list` - Component for displaying multiple threads
+- `input-fields` - Various input field components
+- `form` - Form components with validation
+- `graph` - Graph visualization components
+
+## Usage Example
+
+Here's how to set up a complete chat interface:
+
+```bash
+# First, authenticate
+npx tambo login
+
+# Add required components
+npx tambo add chat-input
+npx tambo add chat-thread
+```
+
+Then use in your React component:
+
+```tsx
+import { ChatInput } from "@/components/ui/chat-input"
+import { ChatThread } from "@/components/ui/chat-thread"
+
+export default function Chat() {
+  return (
+    <div>
+      <ChatThread />
+      <ChatInput />
+    </div>
+  )
+}
+```
+
+## What Gets Installed
+
+When you add a component, the CLI:
+
+1. **Checks if there is a components directory**
+   - Creates `src/components/ui` directory if there is none
+
+1. **Creates Component File**
+   - Adds the component to `src/components/ui/`
+   - Includes all necessary TypeScript types and props
+
+2. **Updates Tailwind Configuration**
+   - Modifies `tailwind.config.ts` with required colors
+   - Adds necessary theme extensions
+
+3. **Updates Global Styles**
+   - Adds required CSS variables to `globals.css`
+   - Configures both light and dark theme variables
+
+4. **Installs Dependencies**
+   - Adds required npm packages
+   - Sets up Tailwind dependencies
+
+## Troubleshooting
+
+### Component Not Found
+If you see an error about component not found in registry:
+- Check the component name is correct
+- Ensure you're using the latest CLI version
+
+### Styling Issues
+If styles aren't applying correctly:
+- Verify `globals.css` was updated
+- Check `tailwind.config.ts` for color configurations
+- Ensure Tailwind dependencies are installed
+
+### Installation Errors
+If installation fails:
+- Ensure you're in the project root directory
+- Check if `package.json` exists
+- Verify you have write permissions
+
+## CLI Commands Reference
+
+```bash
+# Create account
+npx tambo signup
+
+# Log in to existing account
+npx tambo login
+
+# Add a component
+npx tambo add <component-name>
+```
+
+## Next Steps
+
+After installing components:
+
+1. Import the component from `@/components/ui`
+2. Customize using Tailwind classes
+3. Configure component props as needed
+4. Check component-specific documentation for advanced usage

@@ -1,0 +1,5 @@
+{
+  "title": "Tambo CLI",
+  "description": "Learn how to install and use Tambo CLI to create and manage your Tambo projects.",
+  "pages": ["manual-installation", "cli-commands"]
+}
