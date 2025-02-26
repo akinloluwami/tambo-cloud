@@ -25,7 +25,7 @@ export default async function Page(props: {
 
   return (
     <DocsPage toc={page.data.toc} full={page.data.full}>
-      <Callout type="info" title="V 0.1.0 Coming Soon">
+      <Callout type="info" title="V 1.0.0 Coming Soon">
         These are the current stable docs for Hydra AI. Read about our upcoming
         release{" "}
         <Link href="/blog/0-1-0-announcement" className="underline bold">

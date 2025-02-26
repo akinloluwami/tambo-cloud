@@ -21,8 +21,8 @@ export default async function Page(props: {
 
   return (
     <DocsPage toc={page.data.toc} full={page.data.full}>
-      <Callout type="info" title="V 0.1.0 Coming Soon">
-        These are draft docs for the upcoming 0.1.0 release. Read more about the
+      <Callout type="info" title="V 1.0.0 Coming Soon">
+        These are draft docs for the upcoming 1.0.0 release. Read more about the
         upcoming release{" "}
         <Link href="/blog/0-1-0-announcement" className="underline bold">
           here
