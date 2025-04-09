@@ -46,7 +46,7 @@ import {
 
 @Injectable()
 export class ThreadsService {
-  private readonly FREE_MESSAGE_LIMIT = 50;
+  private readonly FREE_MESSAGE_LIMIT = 5;
 
   constructor(
     // @Inject(TRANSACTION)
