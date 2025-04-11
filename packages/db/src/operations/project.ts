@@ -210,18 +210,16 @@ export async function deleteApiKey(
   projectId: string,
   apiKeyId: string,
 ): Promise<boolean> {
-  return await db.transaction(async (tx) => {
-    const deleted = await tx
-      .delete(schema.apiKeys)
-      .where(
-        and(
-          eq(schema.apiKeys.id, apiKeyId),
-          eq(schema.apiKeys.projectId, projectId),
-        ),
-      )
-      .returning();
-    return deleted.length > 0;
-  });
+  const deleted = await db
+    .delete(schema.apiKeys)
+    .where(
+      and(
+        eq(schema.apiKeys.id, apiKeyId),
+        eq(schema.apiKeys.projectId, projectId),
+      ),
+    )
+    .returning();
+  return deleted.length > 0;
 }
 
 export async function validateApiKey(
