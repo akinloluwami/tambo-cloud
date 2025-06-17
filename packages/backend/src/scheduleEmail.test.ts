@@ -1,5 +1,5 @@
-import { scheduleEmail } from "@tambo-ai-cloud/db/src/operations/emailSchedules";
-import { emailSchedules } from "@tambo-ai-cloud/db/src/schema";
+import { scheduleEmail } from "@tambo-ai-cloud/db";
+import { emailSchedules } from "@tambo-ai-cloud/db";
 
 describe("scheduleEmail", () => {
   it("should insert correct values", async () => {
