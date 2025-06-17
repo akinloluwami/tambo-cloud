@@ -1,5 +1,7 @@
-import { scheduleEmail } from "@tambo-ai-cloud/db";
-import { emailSchedules } from "@tambo-ai-cloud/db";
+import { operations, emailSchedules } from "@tambo-ai-cloud/db";
+
+// `scheduleEmail` is defined as part of the `operations` namespace
+const { scheduleEmail } = operations;
 
 describe("scheduleEmail", () => {
   it("should insert correct values", async () => {
