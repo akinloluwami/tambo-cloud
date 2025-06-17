@@ -1008,9 +1008,8 @@ export class ThreadsService {
         toolCallCounts,
       );
 
-      for await (const chunk of toolResponseMessageStream) {
-        yield chunk;
-      }
+      // Delegate to the tool response message stream
+      yield* toolResponseMessageStream;
       return;
     }
 
