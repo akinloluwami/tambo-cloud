@@ -1,4 +1,4 @@
-import { operations, emailSchedules } from "@tambo-ai-cloud/db";
+import { operations, schema } from "@tambo-ai-cloud/db";
 
 // `scheduleEmail` is defined as part of the `operations` namespace
 const { scheduleEmail } = operations;
@@ -18,7 +18,7 @@ describe("scheduleEmail", () => {
       sendAt,
     });
 
-    expect(insert).toHaveBeenCalledWith(emailSchedules);
+    expect(insert).toHaveBeenCalledWith(schema.emailSchedules);
     expect(values).toHaveBeenCalledWith(
       expect.objectContaining({
         recipient: "a@example.com",
