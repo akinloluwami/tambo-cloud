@@ -979,6 +979,7 @@ export class ThreadsService {
           ...finalThreadMessage,
           content: convertContentPartToDto(finalThreadMessage.content),
           componentState: finalThreadMessage.componentState ?? {},
+          serverToolCallRequest: toolCallRequest,
           toolCallRequest: undefined,
           tool_call_id: undefined,
         },
