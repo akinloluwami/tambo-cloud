@@ -506,3 +506,41 @@ export const mcpOauthClientRelations = relations(
   }),
 );
 export type DBMcpOauthClient = typeof mcpOauthClients.$inferSelect;
+
+// -----------------------------------------------------------------------------
+// Email schedules – for scheduling follow-up emails
+// -----------------------------------------------------------------------------
+export const emailSchedules = pgTable(
+  "email_schedules",
+  ({ text, timestamp }) => ({
+    id: text("id")
+      .primaryKey()
+      .notNull()
+      .unique()
+      .default(sql`generate_custom_id('ems_')`),
+    recipient: text("recipient").notNull(),
+    component: text("component").notNull(),
+    // Arbitrary props passed to the email component
+    props: customJsonb<Record<string, unknown>>("props").notNull(),
+    // When the email should be sent
+    sendAt: timestamp("send_at", { withTimezone: true }).notNull(),
+    // Optional condition expression (DSL / SQL snippet, etc.)
+    condition: text("condition"),
+    // pending | sent | cancelled | failed (free-form for now)
+    status: text("status").notNull().default("pending"),
+    // Populated once the email has actually been sent
+    sentAt: timestamp("sent_at", { withTimezone: true }),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+  }),
+  (table) => {
+    // Optimise lookup for due emails
+    return [index("email_schedules_send_at_idx").on(table.sendAt)];
+  },
+);
+
+export type DBEmailSchedule = typeof emailSchedules.$inferSelect;
