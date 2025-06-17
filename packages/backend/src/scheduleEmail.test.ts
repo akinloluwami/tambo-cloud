@@ -1,5 +1,5 @@
-// Mock superjson before any other imports to sidestep ESM issues
-jest.mock("superjson");
+// Mock superjson as a *virtual* module before any other imports to sidestide ESM issues
+jest.mock("superjson", () => ({}), { virtual: true });
 import { operations } from "@tambo-ai-cloud/db";
 
 // `scheduleEmail` is defined as part of the `operations` namespace
