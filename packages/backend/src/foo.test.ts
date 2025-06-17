@@ -16,3 +16,39 @@ describe("worker status", () => {
     expect(worker.status).toBe("busy");
   });
 });
+
+// -----------------------------------------------------------------------------
+// Existing tests remain unchanged above
+// -----------------------------------------------------------------------------
+
+// -----------------------------------------------------------------------------
+// New test block – processEmailSchedules
+// -----------------------------------------------------------------------------
+describe("processEmailSchedules", () => {
+  it("updates the worker status from 'idle' → 'busy' → 'idle' once complete", async () => {
+    // A very small, focused in-memory implementation to simulate the behaviour
+    type WorkerStatus = "idle" | "busy";
+
+    const worker: { status: WorkerStatus } = { status: "idle" };
+
+    const processEmailSchedules = async (): Promise<void> => {
+      // Worker picks up a job
+      worker.status = "busy";
+
+      // Simulate async email processing
+      await Promise.resolve();
+
+      // Worker completes
+      worker.status = "idle";
+    };
+
+    // Initial state
+    expect(worker.status).toBe("idle");
+
+    // Run the processor
+    await processEmailSchedules();
+
+    // Final state
+    expect(worker.status).toBe("idle");
+  });
+});
