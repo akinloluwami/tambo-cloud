@@ -93,8 +93,8 @@ const config: Config = {
   moduleNameMapper: {
     "^@tambo-ai-cloud/(.*)$": "<rootDir>/../../../packages/$1/src",
     "^@ai-sdk/(.*)$":
-      "<rootDir>/../../../packages/backend/src/__jest__/ai-sdk-stub.cjs",
-    "^ai$": "<rootDir>/../../../packages/backend/src/__jest__/ai-sdk-stub.cjs",
+      "<rootDir>/../../../packages/backend/src/__jest__/ai-sdk-stub.ts",
+    "^ai$": "<rootDir>/../../../packages/backend/src/__jest__/ai-sdk-stub.ts",
   },
 
   // An array of regexp pattern strings, matched against all module paths before considered 'visible' to the module loader
