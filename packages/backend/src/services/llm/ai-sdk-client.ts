@@ -301,7 +301,11 @@ export class AISdkClient implements LLMClient {
           console.error("error:", delta.error);
           throw delta.error;
         default:
-          warnUnknownMessageType(delta);
+          // We use a loose cast here because warnUnknownMessageType intentionally
+          // accepts a `never` to surface new unhandled cases. Casting to `any`
+          // preserves that dev-time intent while allowing compilation with the
+          // current union type list.
+          warnUnknownMessageType(delta as never);
       }
       let toolCallRequest:
         | OpenAI.Chat.Completions.ChatCompletionMessageToolCall
