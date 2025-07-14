@@ -1,4 +1,5 @@
 import { ComponentLibraryDemo } from "@/components/sections/component-library-demo";
+import { CodeSnippets } from "@/components/sections/code-snippets";
 import { Features } from "@/components/sections/features";
 import { FinalCTA } from "@/components/sections/final-cta";
 import { Footer } from "@/components/sections/footer";
@@ -16,6 +17,7 @@ export default function Home() {
           <Hero />
           <ComponentLibraryDemo />
           <SocialProof />
+          <CodeSnippets />
           {/* <CodeExamples /> */}
           {/* <InstallationSteps /> */}
           {/* <Statistics /> */}
