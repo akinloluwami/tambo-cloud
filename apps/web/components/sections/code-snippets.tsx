@@ -7,54 +7,81 @@ import hljs from "highlight.js/lib/core";
 import typescript from "highlight.js/lib/languages/typescript";
 import "highlight.js/styles/stackoverflow-light.css";
 import {
+  ChevronDown,
   Code,
-  FileCode,
-  FileJson,
   MonitorIcon,
   PackageIcon,
+  Search,
+  Wand2,
   Zap,
 } from "lucide-react";
-import React, { useState } from "react";
+import Link from "next/link";
+import React, { useEffect, useRef, useState } from "react";
 
 hljs.registerLanguage("typescript", typescript);
 
 type TabKey = "register" | "input" | "render" | "state" | "tools" | "mcp";
+// | "interactive"
+// | "context";
 
 // File information for each code example
 const fileInfo: Record<
   TabKey,
-  { filename: string; icon: React.ReactNode; description: string }
+  {
+    filename: string;
+    icon: React.ReactNode;
+    description: string;
+    preview: string;
+  }
 > = {
   register: {
     filename: "registerGenUI.tsx",
     icon: <PackageIcon className="w-4 h-4" />,
     description: "Register components with TamboProvider",
+    preview: "register your own react components",
   },
   input: {
     filename: "sendMessage.tsx",
     icon: <Code className="w-4 h-4" />,
     description: "Handle user input and message sending",
+    preview: "send messages to the ai with our hooks",
   },
   render: {
     filename: "renderGenUI.tsx",
-    icon: <FileCode className="w-4 h-4" />,
+    icon: <Wand2 className="w-4 h-4" />,
     description: "Render chat thread with AI components",
+    preview: "render ai generated components",
   },
   state: {
     filename: "syncStateWithAI.tsx",
     icon: <MonitorIcon className="w-4 h-4" />,
     description: "Sync component state with AI",
+    preview: "state management for your ai agents",
   },
   tools: {
     filename: "useClientSideTools.tsx",
     icon: <Zap className="w-4 h-4" />,
     description: "Client-side tools for AI interaction",
+    preview: "improve context with data fetching",
   },
   mcp: {
     filename: "useMCPClientSide.tsx",
-    icon: <FileJson className="w-4 h-4" />,
+    icon: <Search className="w-4 h-4" />,
     description: "MCP server integration",
+    preview: "add mcp servers in a few lines of code",
   },
+  //interactive: {
+  //  filename: "addInteracableComponents.tsx",
+  //  icon: <MousePointer className="w-4 h-4" />,
+  //  description: "Interactive components in chat",
+  //  preview: "interact with any component in your chat",
+  //},
+  //context: {
+  //  filename: "addContext.tsx",
+  //  icon: <MessageSquare className="w-4 h-4" />,
+  //  description: "Add context to chat easily",
+  //  preview: "add context in the chat easily",
+  // },
 };
 
 // Code examples for different tabs
@@ -80,12 +107,18 @@ export default function App() {
   );
 }`,
 
-  input: `const { value, setValue, submit } = useTamboThreadInput();
+  input: `// Option 1: Using form input with hooks
+const { value, setValue, submit } = useTamboThreadInput();
 
 <form onSubmit={e => { e.preventDefault(); submit(); }}>
   <input value={value} onChange={e => setValue(e.target.value)} />
   <button>Send</button>
-</form>`,
+</form>
+
+// Option 2: Send messages programmatically
+const { sendThreadMessage } = useTamboThread();
+ 
+await sendThreadMessage("What is the weather like today?");`,
 
   render: `import { useTambo } from "@tambo-ai/react";
 
@@ -106,21 +139,15 @@ export function ChatThread() {
 
   state: `import { useTamboComponentState } from "@tambo-ai/react";
 
-export function WeatherCard() {
-  const [weather, , { isPending }] = useTamboComponentState("weather", {
-    temperature: 0,
-    condition: "",
-    location: "",
-  });
+export function NameInput() {
+  const [state, setState] = useTamboComponentState("name", { name: "" });
 
-  return isPending ? (
-    <div>Loading…</div>
-  ) : (
-    <div>
-      <h3>{weather.location}</h3>
-      <div>{weather.temperature}°C</div>
-      <div>{weather.condition}</div>
-    </div>
+  return (
+    <input
+      value={state.name}
+      onChange={e => setState({ name: e.target.value })}
+      placeholder="Enter your name"
+    />
   );
 }`,
 
@@ -157,6 +184,10 @@ const tools = [
     {children}
   </TamboMcpProvider>
 </TamboProvider>`,
+
+  //interactive: `// Coming soon!`,
+
+  //context: `// Cooming soon!`,
 };
 
 // HighlightedCodeBlock component for code rendering with highlight.js
@@ -204,9 +235,29 @@ export const HighlightedCodeBlock: React.FC<HighlightedCodeBlockProps> = ({
 
 export function CodeSnippets() {
   const [activeTab, setActiveTab] = useState<TabKey>("register");
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
+        setIsDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   const handleTabChange = (tab: TabKey) => {
     setActiveTab(tab);
+    setIsDropdownOpen(false);
   };
 
   return (
@@ -216,44 +267,128 @@ export function CodeSnippets() {
     >
       <div className="w-full space-y-4">
         {/* Title */}
-        <div className="text-center mb-8">
-          <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
-            Code Examples
+        <div className="text-center mb-8 sm:mb-16">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-heading mb-4 sm:mb-8 tracking-tight">
+            AI Orchestration for your UI
           </h2>
-          <p className="mt-4 text-lg text-gray-600">
-            Explore different ways to use Tambo in your applications
+          <p className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-4xl mx-auto">
+            Thoughtful hooks and components to orchestrate your ai agents.
           </p>
         </div>
 
-        <div className="w-full max-w-[90vw] md:max-w-[80vw] h-[70vh] md:h-[65vh] mx-auto">
-          <div className="rounded-lg overflow-hidden border shadow-md bg-background h-full flex">
-            {/* Left sidebar with tabs (VS Code style) */}
-            <div className="w-64 bg-gray-50 border-r border-gray-200 flex flex-col">
+        <div className="w-full max-w-[90vw] md:max-w-[80vw] h-[75vh] md:h-[70vh] max-h-[600px] mx-auto">
+          <div className="rounded-lg overflow-hidden border shadow-md bg-background h-full flex flex-col md:flex-row">
+            {/* Mobile dropdown */}
+            <div className="md:hidden" ref={dropdownRef}>
+              <div className="relative">
+                <button
+                  onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                  className="w-full px-4 py-3 bg-gray-50 border-b border-gray-200 flex items-center justify-between text-left"
+                >
+                  <div className="flex items-center space-x-3">
+                    <div className="flex-shrink-0">
+                      {fileInfo[activeTab].icon}
+                    </div>
+                    <div>
+                      <div className="font-medium text-sm">
+                        {fileInfo[activeTab].filename}
+                      </div>
+                      <div className="text-xs text-gray-500">
+                        {fileInfo[activeTab].preview}
+                      </div>
+                    </div>
+                  </div>
+                  <ChevronDown
+                    className={clsx(
+                      "w-4 h-4 transition-transform",
+                      isDropdownOpen ? "rotate-180" : "",
+                    )}
+                  />
+                </button>
+
+                {isDropdownOpen && (
+                  <div className="absolute top-full left-0 right-0 z-50 bg-white border-b border-l border-r border-gray-200 shadow-lg max-h-60 overflow-y-auto">
+                    {Object.entries(fileInfo).map(
+                      ([key, { filename, icon, preview }]) => (
+                        <button
+                          key={key}
+                          onClick={() => handleTabChange(key as TabKey)}
+                          className={clsx(
+                            "w-full px-4 py-3 text-left flex items-center space-x-3 hover:bg-gray-50 transition-colors",
+                            activeTab === key
+                              ? "bg-blue-50 text-blue-700"
+                              : "text-gray-700",
+                          )}
+                        >
+                          <div className="flex-shrink-0">{icon}</div>
+                          <div className="flex-1 min-w-0">
+                            <div className="font-medium text-sm truncate">
+                              {filename}
+                            </div>
+                            <div className="text-xs text-gray-500 truncate">
+                              {preview}
+                            </div>
+                          </div>
+                        </button>
+                      ),
+                    )}
+
+                    {/* Mobile docs button */}
+                    <div className="border-t border-gray-200 p-3">
+                      <Link
+                        href="/docs"
+                        className="w-full inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-primary-foreground bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors"
+                      >
+                        Read more in our docs
+                      </Link>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Desktop sidebar */}
+            <div className="hidden md:flex w-72 bg-gray-50 border-r border-gray-200 flex-col">
               {/* Explorer header */}
               <div className="px-4 py-2 bg-gray-100 border-b border-gray-200 font-medium text-sm text-gray-700">
                 EXPLORER
               </div>
 
               {/* File tabs */}
-              <div className="flex-1 overflow-y-auto">
+              <div className="flex-1">
                 {Object.entries(fileInfo).map(
-                  ([key, { filename, icon, description }]) => (
+                  ([key, { filename, icon, description, preview }]) => (
                     <button
                       key={key}
                       onClick={() => handleTabChange(key as TabKey)}
                       className={clsx(
-                        "w-full px-4 py-2 text-left text-sm transition-colors flex items-center space-x-2 hover:bg-gray-100",
+                        "w-full px-4 py-3 text-left text-sm transition-colors flex items-start space-x-3 hover:bg-gray-100",
                         activeTab === key
                           ? "bg-blue-50 text-blue-700 border-r-2 border-blue-500"
                           : "text-gray-700",
                       )}
                       title={description}
                     >
-                      {icon}
-                      <span className="truncate">{filename}</span>
+                      <div className="flex-shrink-0 mt-0.5">{icon}</div>
+                      <div className="flex-1 min-w-0">
+                        <div className="font-medium truncate">{filename}</div>
+                        <div className="text-xs text-gray-500 mt-0.5 truncate">
+                          {preview}
+                        </div>
+                      </div>
                     </button>
                   ),
                 )}
+              </div>
+
+              {/* Desktop docs button */}
+              <div className="border-t border-gray-200 p-4">
+                <Link
+                  href="/docs"
+                  className="w-full inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-primary-foreground bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors"
+                >
+                  Read more in our docs
+                </Link>
               </div>
             </div>
 
@@ -279,7 +414,6 @@ export function CodeSnippets() {
                     fontSize: "0.9rem",
                     boxShadow: "none",
                     height: "100%",
-                    overflow: "auto",
                     padding: "1rem",
                   }}
                 >

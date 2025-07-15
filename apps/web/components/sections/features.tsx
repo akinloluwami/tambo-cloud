@@ -7,8 +7,7 @@ import Image from "next/image";
 // Move copy directly into the component
 const featuresContent = {
   heading: "Features",
-  description:
-    "A batteries-included React package for adding intelligence into your app.",
+  description: "The features you expect from a modern AI assistant.",
   list: [
     {
       // octo-running
