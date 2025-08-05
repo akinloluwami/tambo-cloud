@@ -1,4 +1,9 @@
 import type { JestConfigWithTsJest } from "ts-jest";
+import { createRequire } from "module";
+
+// Provide CommonJS `require` in ESM context for tools like `prettierPath`.
+ 
+const require = createRequire(import.meta.url);
 
 const config: JestConfigWithTsJest = {
   preset: "ts-jest",

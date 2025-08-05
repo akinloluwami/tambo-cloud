@@ -1,4 +1,9 @@
 import type { JestConfigWithTsJest } from "ts-jest";
+import { createRequire } from "module";
+
+// Recreate CommonJS `require` for ESM Jest config execution.
+ 
+const require = createRequire(import.meta.url);
 
 const config: JestConfigWithTsJest = {
   preset: "ts-jest",
