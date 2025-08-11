@@ -42,6 +42,20 @@ const PROVIDER_CONFIGS = {
       "Content-Type": "application/json",
     }),
   },
+  groq: {
+    endpoint: "https://api.groq.com/openai/v1/models",
+    headers: (key: string) => ({
+      Authorization: `Bearer ${key}`,
+      "Content-Type": "application/json",
+    }),
+  },
+  gemini: {
+    endpoint: "https://generativelanguage.googleapis.com/v1beta/models",
+    headers: (key: string) => ({
+      "x-goog-api-key": key,
+      "Content-Type": "application/json",
+    }),
+  },
 } as const;
 
 export const validateRouter = createTRPCRouter({

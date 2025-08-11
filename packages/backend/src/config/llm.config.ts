@@ -35,6 +35,13 @@ export const llmProviderConfig: LlmProviderConfig = {
     apiKeyLink: "https://console.mistral.ai/api-keys",
     models: mistralModels,
   },
+  // groq: {
+  //   apiName: "groq",
+  //   displayName: "Groq",
+  //   docLinkRoot: "https://console.groq.com/docs/overview",
+  //   apiKeyLink: "https://console.groq.com/keys",
+  //   models: groqModels,
+  // },
   "openai-compatible": {
     apiName: "openai-compatible",
     displayName: "OpenAI Compatible",
