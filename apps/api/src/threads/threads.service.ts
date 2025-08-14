@@ -14,6 +14,7 @@ import {
   decryptProviderKey,
   DEFAULT_OPENAI_MODEL,
   GenerationStage,
+  getToolName,
   LegacyComponentDecision,
   MessageRole,
   ThreadMessage,
@@ -502,7 +503,9 @@ export class ThreadsService {
     await operations.ensureThreadByProjectId(this.getDb(), threadId, projectId);
   }
 
-  private async getMessage(messageId: string) {
+  private async getMessage(
+    messageId: string,
+  ): Promise<schema.DBMessageWithThread> {
     try {
       const message = await operations.getMessageWithAccess(
         this.getDb(),
@@ -1198,7 +1201,7 @@ export class ThreadsService {
     // Initially, the call was made with a strict schema, so we need to remove non-required parameters
     const strictToolCallRequest = finalThreadMessage.toolCallRequest;
     const originalTool = originalTools.find(
-      (tool) => tool.function.name === strictToolCallRequest?.toolName,
+      (tool) => getToolName(tool) === strictToolCallRequest?.toolName,
     );
 
     const toolCallRequest = unstrictifyToolCallRequest(

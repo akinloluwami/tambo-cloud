@@ -1,6 +1,5 @@
 import {
   ActionType,
-  ChatCompletionContentPart,
   ComponentDecisionV2,
   DeprecatedComposioAuthMode,
   GenerationStage,
@@ -26,6 +25,7 @@ import {
   uuid,
 } from "drizzle-orm/pg-core";
 import { authenticatedRole, authUid } from "drizzle-orm/supabase";
+import OpenAI from "openai";
 import { customJsonb } from "./drizzleUtil";
 export { authenticatedRole, authUid } from "drizzle-orm/supabase";
 
@@ -401,7 +401,10 @@ export const messages = pgTable("messages", ({ text, timestamp, boolean }) => ({
   role: text("role", {
     enum: Object.values<string>(MessageRole) as [MessageRole],
   }).notNull(),
-  content: customJsonb<ChatCompletionContentPart[]>("content").notNull(),
+  content:
+    customJsonb<OpenAI.Chat.Completions.ChatCompletionContentPart[]>(
+      "content",
+    ).notNull(),
   additionalContext: customJsonb<Record<string, unknown>>("additional_context"),
   toolCallId: text("tool_call_id"),
   componentDecision: customJsonb<ComponentDecisionV2>("component_decision"),
@@ -419,6 +422,12 @@ export const messages = pgTable("messages", ({ text, timestamp, boolean }) => ({
 }));
 
 export type DBMessage = typeof messages.$inferSelect;
+export type DBMessageWithThread = DBMessage & {
+  thread: DBThread;
+};
+export type DBMessageWithSuggestions = DBMessage & {
+  suggestions: DBSuggestion[];
+};
 
 export const threadRelations = relations(threads, ({ one, many }) => ({
   project: one(projects, {
@@ -427,6 +436,9 @@ export const threadRelations = relations(threads, ({ one, many }) => ({
   }),
   messages: many(messages),
 }));
+export type DBThreadWithMessages = DBThread & {
+  messages: DBMessageWithSuggestions[];
+};
 
 export const messageRelations = relations(messages, ({ one, many }) => ({
   thread: one(threads, {
